@@ -161,7 +161,7 @@ if __name__ == '__main__':
         obj = objective_nu_factory(x, y, u, model, loss)
         s_opt, nu_opt, history = projected_subgradient(np.ones(N) / N, obj, max_iter=1000, tol=1e-3)
         print(f"projected subgradient {s_opt, nu_opt}")
-        results.append((s1val, s2val, nu_opt, s1, s2, s_opt))
+        results.append((s1val, s2val, nu_opt, s1.tolist(), s2.tolist(), s_opt.tolist(), x.tolist(), y.tolist(), u.tolist()))
 
         end = time.time()
         print(end - start)
@@ -169,9 +169,11 @@ if __name__ == '__main__':
     total = end_outer - start_outer
     print(total)
 
+    for result in results:
+        print(result)
     with open(f"resultsq{q}.csv", "w") as f:
         writer = csv.writer(f)
-        writer.writerow(['Linear Greedy Val', 'Quadratic Greedy Val', 'Projected Subgradient Val', 'Linear Greedy Strategy', 'Quadratic Greedy Strategy', 'Projected Subgradient Strategy'])
+        writer.writerow(['Linear Greedy Val', 'Quadratic Greedy Val', 'Projected Subgradient Val', 'Linear Greedy Strategy', 'Quadratic Greedy Strategy', 'Projected Subgradient Strategy', 'x', 'y', 'u'])
 
         for result in results:
             writer.writerow(result)

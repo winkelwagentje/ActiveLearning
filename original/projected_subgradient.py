@@ -36,28 +36,38 @@ def projected_subgradient(x0, objective, proj=euclidean_proj_simplex, initial_st
     x = x0.copy()
     history = []
 
-    for k in range(max_iter):
-        if k > 0 and k % 100 == 0:
+    # Initialize best found values
+    f_val, subgrad = objective(x)
+    best_f_val = f_val
+    best_x = x.copy()
+    history.append(f_val)
+
+    for k in range(1, max_iter + 1):
+        if k % 100 == 0:
             print(f"projected subgradient iteration: {k}")
+        
+        # Diminishing step size
+        step_size = initial_step / k
+        
+        # Update x
+        x = x - step_size * subgrad
+        x = proj(x)
+        
+        # Evaluate new point
         f_val, subgrad = objective(x)
         history.append(f_val)
         
-        # Convergence check: if subgradient is small enough, break.
+        # Update best if current is better
+        if f_val < best_f_val:
+            best_f_val = f_val
+            best_x = x.copy()
+        
+        # Convergence check
         if np.linalg.norm(subgrad) < tol:
             break
-        
-        # Diminishing step size: step size = initial_step / (k + 1)
-        step_size = initial_step / (k + 1)
-        
-        # Update: move in the negative subgradient direction.
-        x = x - step_size * subgrad
-        
-        # Project the updated point back onto the simplex.
-        x = proj(x)
-    
-    # Compute the final objective value at the optimal x.
-    f_opt, _ = objective(x)
-    return x, f_opt, history
+
+    return best_x, best_f_val, history
+
 
 # Define two convex differentiable functions (quadratics) and their gradients.
 c1 = np.array([0.3, 0.2, 0.5, 0.0])
