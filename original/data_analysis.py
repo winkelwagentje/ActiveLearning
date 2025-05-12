@@ -1,6 +1,8 @@
 import pandas as pd 
 import numpy as np
 from scipy import stats
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 def main():
     data = pd.read_csv("resultsq0.5.csv")
@@ -16,7 +18,6 @@ def main():
     ].reset_index(drop=True)
 
     negative_vals = negatives[['Linear Greedy Val', 'Quadratic Greedy Val', 'Projected Subgradient Val']]
-    n = len(negatives)
 
     print("Filtered negative values:")
     print(negative_vals.head())
